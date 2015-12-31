@@ -9,17 +9,25 @@ HostIP='0.0.0.0'
 
 # set data dir
 JobWork='/data/predictionio/work'
+MysqlWork='/data/predictionio/mysql'
 
-update_images() {
+update_prediction_images() {
   # pull spark-cluster docker image
   docker pull docker.baozou.com/baozou/predictionio
 
   check_exec_success "$?" "pulling 'predictionio' image"
 }
 
+update_mysql_images() {
+  # pull mysql docker image
+  docker pull docker.baozou.com/mysql:5.6
+
+  check_exec_success "$?" "pulling 'mysql' image"
+}
+
 start() {
 
-  update_images
+  update_prediction_images
 
   docker kill predictionio_mc 2>/dev/null
   docker rm predictionio_mc 2>/dev/null
@@ -30,7 +38,7 @@ start() {
   docker run -d --name predictionio_mc \
     -v ${CurDir}:/data/predictionio \
     -v ${JobWork}:/data/work/predictionio \
-    -v ${CurDir}/conf:/PredictionIO/conf \
+    -v ${CurDir}/conf/prediction:/PredictionIO/conf \
     -v ${CurDir}/sbt:/sbt \
     --env HOME=${JobWork} \
     --env SBT_OPTS="-Dsbt.global.base=/sbt/.sbt -Dsbt.ivy.home=/sbt/.ivy2" \
@@ -41,7 +49,7 @@ start() {
     pio eventserver \
     $* 2>&1
 
-  check_exec_success "$?" "start project ${WorkDir}"
+  check_exec_success "$?" "start project ${JobWork}"
 }
 
 newapp() {
@@ -62,6 +70,28 @@ deploy() {
 
 example() {
   python3 ${CurDir}/data/import_events.py --access_key $*
+}
+
+mysql() {
+  update_mysql_images
+
+  docker kill predictionio_mc_mysql 2>/dev/null
+  docker rm predictionio_mc_mysql 2>/dev/null
+
+  mkdir -p ${MysqlWork}
+
+  docker run -d --name predictionio_mc_mysql \
+    -v ${MysqlWork}:/var/lib/mysql \
+    -v ${CurDir}/conf/mysql:/etc/mysql/conf.d \
+    --env MYSQL_ROOT_PASSWORD=predictionio \
+    --env MYSQL_DATABASE=piomc \
+    --net=host \
+    --log-opt max-size=10m \
+    --log-opt max-file=9 \
+    docker.baozou.com/mysql:5.6 \
+    $* 2>&1
+
+  check_exec_success "$?" "start project ${MysqlWork}"
 }
 
 debug() {
@@ -107,6 +137,10 @@ case "$1" in
     shift
     example $*
     ;;
+  mysql)
+    shift
+    mysql $*
+    ;;
   stop) stop ;;
   status) status ;;
   debug) debug ;;
@@ -125,6 +159,7 @@ case "$1" in
     echo "  - train"
     echo "  - deploy"
     echo "  - example <access_key>"
+    echo "  - mysql"
     echo "  - status"
     echo "  - stop"
     exit 1

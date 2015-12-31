@@ -43,6 +43,7 @@ Command:
   - train
   - deploy
   - example <access_key>
+  - mysql
   - status
   - stop
 ```
@@ -51,8 +52,9 @@ Command:
 
 **Note**: use `sodu` or run script under root permission.  
 **Note**: create a directory named `jars` in the path of repository, and put mysql-connector jar for Spark into it. We use `mysql-connector-java-5.1.36-bin.jar`, you can use other version of connector, see [offical site](http://dev.mysql.com/downloads/file/?id=460363).
+**Note**: we use mysql to store our data, so you need to create a mysql database, and edit prediction's config, see step.1. Or you can just use `mysql` command of our entry script to start a mysql docker container if you like.
 
-1. into `./conf/` to edit the config of PredictionIO itself in `pio-env.sh` and log config of Spark in `log4j.properties`.
+1. into `./conf/prediction` to edit the config of PredictionIO itself in `pio-env.sh` and log config of Spark in `log4j.properties`.
 2. Usually, use `start` command to start docker container and build up each work directorise.
 3. Create a new application, using `newapp` command.  
     3.1. In test case, you can use `example` command, for more detail, see `pio-mc.sh`.  
