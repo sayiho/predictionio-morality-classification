@@ -18,9 +18,9 @@ def import_events(client, file):
       entity_type="user",
       entity_id=str(count), # use the count num as user ID
       properties= {
-        "attr0" : int(attr[0]),
-        "attr1" : int(attr[1]),
-        "attr2" : int(attr[2]),
+        "attr0" : float(attr[0]),
+        "attr1" : float(attr[1]),
+        "attr2" : float(attr[2]),
         "plan" : int(plan)
       }
     )

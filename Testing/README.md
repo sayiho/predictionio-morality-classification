@@ -107,7 +107,7 @@ $ curl -H "Content-Type: application/json" \
 ```python
 import predictionio
 engine_client = predictionio.EngineClient(url="http://localhost:8000")
-print engine_client.send_query({"attr":2)
+print engine_client.send_query({"attr":2})
 ```
 
 ### Sample JSON Response

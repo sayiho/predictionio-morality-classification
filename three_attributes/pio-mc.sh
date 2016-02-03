@@ -69,7 +69,7 @@ deploy() {
 }
 
 example() {
-  python3 ${CurDir}/data/import_events.py --access_key $*
+  python3 ${CurDir}/data/import_eventserver.py --access_key $*
 }
 
 mysql() {

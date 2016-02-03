@@ -4,7 +4,10 @@ import io.prediction.controller.EngineFactory
 import io.prediction.controller.Engine
 
 class Query(
-  val attr : Double
+  val attr0 : Double,
+  val attr1 : Double,
+  val attr2 : Double,
+  val attr3 : Double
 ) extends Serializable
 
 class PredictedResult(
