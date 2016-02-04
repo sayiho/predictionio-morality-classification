@@ -64,12 +64,24 @@ train() {
   docker exec predictionio_mc bash -c "cd /data/predictionio && pio train -- --driver-class-path /data/predictionio/jars/mysql-connector-java-5.1.36-bin.jar"
 }
 
+trainbest() {
+  docker exec predictionio_mc bash -c "cd /data/predictionio && pio train -v best.json -- --driver-class-path /data/predictionio/jars/mysql-connector-java-5.1.36-bin.jar"
+}
+
 deploy() {
   docker exec -d predictionio_mc bash -c "cd /data/predictionio && pio deploy -- --driver-class-path /data/predictionio/jars/mysql-connector-java-5.1.36-bin.jar"
 }
 
+deploybest() {
+  docker exec -d predictionio_mc bash -c "cd /data/predictionio && pio deploy -v best.json -- --driver-class-path /data/predictionio/jars/mysql-connector-java-5.1.36-bin.jar"
+}
+
 example() {
   python3 ${CurDir}/data/import_eventserver.py --access_key $*
+}
+
+pioeval() {
+  docker exec predictionio_mc bash -c "cd /data/predictionio && pio eval org.template.classification.AccuracyEvaluation org.template.classification.EngineParamsList -- --driver-class-path /data/predictionio/jars/mysql-connector-java-5.1.36-bin.jar"
 }
 
 mysql() {
@@ -129,13 +141,25 @@ case "$1" in
     shift
     train $*
     ;;
+  trainbest)
+    shift
+    trainbest $*
+    ;;
   deploy)
     shift
     deploy $*
     ;;
+  deploybest)
+    shift
+    deploybest $*
+    ;;
   example)
     shift
     example $*
+    ;;
+  eval)
+    shift
+    pioeval $*
     ;;
   mysql)
     shift
@@ -156,9 +180,10 @@ case "$1" in
     echo "  - start"
     echo "  - newapp"
     echo "  - build"
-    echo "  - train"
-    echo "  - deploy"
+    echo "  - train[best]"
+    echo "  - deploy[best]"
     echo "  - example <access_key>"
+    echo "  - eval"
     echo "  - mysql"
     echo "  - status"
     echo "  - stop"
