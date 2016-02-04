@@ -117,3 +117,7 @@ The following is sample JSON response:
 ```shell
 {"label":0.0}
 ```
+
+## Evaluation
+
+Use command `$ ./pio-mc.sh eval` to run the evaluation. After running, you can find `best.json` in the folder. Use `$ ./pio-mc.sh trainbest` and `$ ./pio-mc.sh deploybest` for training and deploying.

@@ -22,6 +22,10 @@ class DataSource(val dsp: DataSourceParams)
       EmptyEvaluationInfo, Query, ActualResult] {
 
   @transient lazy val logger = Logger[this.type]
+  // attribute custom
+  val config = DataConfig()
+  val attrCount = config.attrCount
+  val attrArray = config.attrArray
 
   override
   def readTraining(sc: SparkContext): TrainingData = {
@@ -30,18 +34,13 @@ class DataSource(val dsp: DataSourceParams)
       appName = dsp.appName,
       entityType = "user",
       // only keep entities with these required properties defined
-      required = Some(List("plan", "attr0", "attr1", "attr2", "attr3")))(sc)
+      required = Some(List("plan") ::: attrArray.toList))(sc)
       // aggregateProperties() returns RDD pair of
       // entity ID and its aggregated properties
       .map { case (entityId, properties) =>
         try {
           LabeledPoint(properties.get[Double]("plan"),
-            Vectors.dense(Array(
-              properties.get[Double]("attr0"),
-              properties.get[Double]("attr1"),
-              properties.get[Double]("attr2"),
-              properties.get[Double]("attr3")
-            ))
+            Vectors.dense(attrArray.map(t => properties.get[Double](t)).toArray)
           )
         } catch {
           case e: Exception => {
@@ -69,18 +68,13 @@ class DataSource(val dsp: DataSourceParams)
       appName = dsp.appName,
       entityType = "user",
       // only keep entities with these required properties defined
-      required = Some(List("plan", "attr0", "attr1", "attr2", "attr3")))(sc)
+      required = Some(List("plan") ::: attrArray.toList))(sc)
       // aggregateProperties() returns RDD pair of
       // entity ID and its aggregated properties
       .map { case (entityId, properties) =>
         try {
           LabeledPoint(properties.get[Double]("plan"),
-            Vectors.dense(Array(
-              properties.get[Double]("attr0"),
-              properties.get[Double]("attr1"),
-              properties.get[Double]("attr2"),
-              properties.get[Double]("attr3")
-            ))
+            Vectors.dense(attrArray.map(t => properties.get[Double](t)).toArray)
           )
         } catch {
           case e: Exception => {
@@ -104,7 +98,7 @@ class DataSource(val dsp: DataSourceParams)
         new TrainingData(trainingPoints),
         new EmptyEvaluationInfo(),
         testingPoints.map {
-          p => (new Query(p.features(0), p.features(1), p.features(2), p.features(3)), new ActualResult(p.label))
+          p => (new Query(p.features.toArray), new ActualResult(p.label)) 
         }
       )
     }

@@ -7,7 +7,7 @@ def query(plan, attrs):
         "plan": int(plan)
     }
     for i, attr in enumerate(attrs):
-        ret['attr%d' % i] = int(attr)
+        ret['%d' % i] = float(attr)
     return ret
 
 

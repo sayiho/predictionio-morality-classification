@@ -3,9 +3,11 @@ import argparse
 
 
 def query(attrs):
-    ret = {}
+    ret = {
+        'features': []
+    }
     for i, attr in enumerate(attrs):
-        ret['attr%d' % i] = int(attr)
+        ret['features'].append(float(attr))
     return ret
 
 
@@ -20,7 +22,7 @@ def test_event(client, file):
         if distribution.get(data[0], None) is None:
             distribution[data[0]] = {
                 "count": 0,
-                "success": 1
+                "success": 0
             }
         plan = float(data[0])
         attr = data[1].split(" ")
@@ -56,10 +58,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Import sample data for classification engine")
     parser.add_argument('--url', default="http://localhost:8000")
-    parser.add_argument('--file', default="./data/data.txt")
+    parser.add_argument('--file', default="./data/data_test.txt")
+    parser.add_argument('--verbose', default="0")
 
     args = parser.parse_args()
     print(args)
 
     client = predictionio.EngineClient(url=args.url)
-    test_event(client, args.file)
+    test_event(client, args.file, verbose=args.verbose)
