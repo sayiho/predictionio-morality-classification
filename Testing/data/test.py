@@ -11,7 +11,7 @@ def query(attrs):
     return ret
 
 
-def test_event(client, file):
+def test_event(client, file, verbose="0"):
     f = open(file, 'r')
     count = 0
     success = 0
@@ -27,11 +27,12 @@ def test_event(client, file):
         plan = float(data[0])
         attr = data[1].split(" ")
         plan_query = client.send_query(query(attr))['label']
-        print({
-            'expect': plan,
-            'attrs': attr,
-            'get': plan_query
-        })
+        if verbose != "0":
+            print({
+                'expect': plan,
+                'attrs': attr,
+                'get': plan_query
+            })
         count += 1
         distribution[data[0]]['count'] += 1
         if plan == plan_query:
