@@ -36,7 +36,7 @@ def getHead(line, featurestype):
     return ret, len(data)
 
 
-def statistics(file, featurestype, verbose):
+def statistics(file, out, featurestype, verbose):
     line = file.readline().rstrip('\r\n')
     head, feature_count = getHead(line, featurestype)
     for line in file:
@@ -66,13 +66,15 @@ def statistics(file, featurestype, verbose):
         if count % 200 == 0:
             print('deal %d lines' % count)
     for i in range(0, feature_count):
-        print(head[i])
+        out.write(json.dumps(head[i]) + '\r\n')
+    print('done')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Make a train data features distribution statistics.")
     parser.add_argument('--file', default=None)
+    parser.add_argument('--out', default=None)
     parser.add_argument('--featurestype', default=None)
     parser.add_argument('--verbose', default="0")
 
@@ -83,4 +85,6 @@ if __name__ == '__main__':
         exit()
 
     with open(args.file, 'r') as f:
-        statistics(f, featurestype=args.featurestype, verbose=args.verbose)
+        with open(args.out, 'w') as f2:
+            statistics(
+                f, f2, featurestype=args.featurestype, verbose=args.verbose)
