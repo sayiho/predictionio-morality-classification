@@ -27,13 +27,15 @@ def test_event(client, file, verbose="0"):
         plan = float(data[0])
         attr = data[1].split(" ")
         plan_query = client.send_query(query(attr))['label']
+        count += 1
         if verbose != "0":
             print({
                 'expect': plan,
                 'attrs': attr,
                 'get': plan_query
             })
-        count += 1
+        else:
+            print(count)
         distribution[data[0]]['count'] += 1
         if plan == plan_query:
             success += 1
