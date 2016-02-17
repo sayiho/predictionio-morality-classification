@@ -39,10 +39,10 @@ def getHead(line, featurestype):
 def statistics(file, out, featurestype, verbose):
     line = file.readline().rstrip('\r\n')
     head, feature_count = getHead(line, featurestype)
+    count = 0
     for line in file:
         line = line.rstrip('\r\n')
         line = getContentArray(line)[1:]
-        count = 0
         for i, x in enumerate(line):
             target = head[i]
             info = target['info']
@@ -62,7 +62,7 @@ def statistics(file, out, featurestype, verbose):
                     info['count'][x] = 1
                 else:
                     info['count'][x] += 1
-            count += 1
+        count += 1
         if count % 200 == 0:
             print('deal %d lines' % count)
     for i in range(0, feature_count):
