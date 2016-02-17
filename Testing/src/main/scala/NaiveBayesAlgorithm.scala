@@ -30,9 +30,17 @@ class NaiveBayesAlgorithm(val ap: AlgorithmParams)
     NaiveBayes.train(data.labeledPoints, ap.lambda)
   }
 
+  val config = DataConfig()
+
   def predict(model: NaiveBayesModel, query: Query): PredictedResult = {
+    val features = new Array[Double](query.features.length)
+    var i = 0
+    while (i < query.features.length) {
+      features(i) = if (query.features(i) == -1) config.default(i) else query.features(i)
+      i += 1
+    }
     val label = model.predict(Vectors.dense(
-      query.features
+      features
     ))
     new PredictedResult(label)
   }
