@@ -23,7 +23,7 @@ def divid(trainx, trainy, verbose):
             linex = trainx.readline().rstrip('\r\n').split(',')
             liney = trainy.readline().rstrip('\r\n').split(',')[1]
             arr = []
-            for i, x in enumerate(ATTRNAMES):
+            for j, x in enumerate(ATTRNAMES):
                 arr.append(linex[x])
             if '-1' in arr:
                 continue
