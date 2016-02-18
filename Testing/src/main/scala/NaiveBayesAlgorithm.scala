@@ -45,7 +45,7 @@ class NaiveBayesAlgorithm(val ap: AlgorithmParams)
     val probabilities = model.predictProbabilities(Vectors.dense(
       features
     ))
-    new PredictedResult(label, null, probabilities)
+    new PredictedResult(label, null, probabilities, model.modelType)
   }
 
 }
